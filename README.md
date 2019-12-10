@@ -206,7 +206,7 @@ To save our data we just call storage.store(Object).
 The method findByFirstName shows the mechanism to obtain data from MicroStream.
 Instead of writing some query in SQL or other query language, we just use plain old Java.
 
-And at last the Spring application self:
+And at last the Spring application itself:
 
 ```java
 @SpringBootApplication

@@ -3,16 +3,22 @@ package one.microstream.examples.springcrud;
 
 public class Customer
 {
-	private String firstName;
-	private String lastName;
-	private Long   customerNumber;
+	private final long customerNumber;
+	private String     firstName;
+	private String     lastName;
 	
-	public Customer(final String firstName, final String lastName, final Long customerNumber)
+	public Customer(final long customerNumber, final String firstName, final String lastName)
 	{
 		super();
+		
+		this.customerNumber = customerNumber;
 		this.firstName      = firstName;
 		this.lastName       = lastName;
-		this.customerNumber = customerNumber;
+	}
+	
+	public long getCustomerNumber()
+	{
+		return this.customerNumber;
 	}
 	
 	public String getFirstName()
@@ -35,20 +41,11 @@ public class Customer
 		this.lastName = lastName;
 	}
 	
-	public Long getCustomerNumber()
-	{
-		return this.customerNumber;
-	}
-	
-	public void setCustomerNumber(final Long customerNumber)
-	{
-		this.customerNumber = customerNumber;
-	}
-	
 	@Override
 	public String toString()
 	{
-		return "Customer [firstName=" + this.firstName + ", lastName=" + this.lastName + ", customerNumber="
-			+ this.customerNumber + "]";
+		return "Customer [customerNumber=" + this.customerNumber
+			+ ", firstName=" + this.firstName
+			+ ", lastName=" + this.lastName + "]";
 	}
 }

@@ -30,10 +30,10 @@ public class Application
 		return (args) ->
 		{
 			long customerNr = 1L;
-			repository.add(new Customer("Thomas", "Wresler" , customerNr++));
-			repository.add(new Customer("Jim"   , "Joe"     , customerNr++));
-			repository.add(new Customer("Kamil" , "Limitsky", customerNr++));
-			repository.add(new Customer("Karel" , "Ludvig"  , customerNr++));
+			repository.add(new Customer(customerNr++, "Thomas", "Wresler"));
+			repository.add(new Customer(customerNr++, "Jim"   , "Joe"));
+			repository.add(new Customer(customerNr++, "Kamil" , "Limitsky"));
+			repository.add(new Customer(customerNr++, "Karel" , "Ludvig"));
 			
 			final Consumer<Customer> logAll = c -> LOG.info(c.toString());
 			
