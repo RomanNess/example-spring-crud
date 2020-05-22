@@ -21,14 +21,14 @@ pom.xml.
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.0.RELEASE</version>
+        <version>2.3.0.RELEASE</version>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <microstream.version>02.00.01-MS-GA-SNAPSHOT</microstream.version>
+        <microstream.version>03.00.00-MS-GA</microstream.version>
     </properties>
 
     <dependencies>
