@@ -3,6 +3,7 @@ package one.microstream.examples.springcrud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -15,13 +16,19 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class CustomerRepositoryTest {
 
     @Autowired
+    @Qualifier("customerRepository")
     private CustomerRepository customerRepository;
+
+    @Autowired
+    @Qualifier("synchronizedCustomerRepository")
+    private CustomerRepository synchronizedCustomerRepository;
 
     @BeforeEach
     void initData() {
@@ -79,6 +86,33 @@ class CustomerRepositoryTest {
 
     @Test
     void concurrentUpdate_causesConcurrentUpdateException() throws InterruptedException {
+
+        List<Future<Boolean>> futures = concurrentUpdateWith(this.customerRepository);
+
+        assertThatThrownBy(() -> {
+            for (Future<Boolean> future: futures) {
+                future.get();
+            }
+        })
+                .isInstanceOf(ExecutionException.class)
+                .hasCauseInstanceOf(ConcurrentModificationException.class)
+        ;
+    }
+
+    @Test
+    void concurrentUpdate_worksWithSynchronizedCollection() throws InterruptedException {
+
+        List<Future<Boolean>> futures = concurrentUpdateWith(this.synchronizedCustomerRepository);
+
+        assertThatCode(() -> {
+            for (Future<Boolean> future: futures) {
+                future.get();
+            }
+        })
+                .doesNotThrowAnyException();
+    }
+
+    private List<Future<Boolean>> concurrentUpdateWith(CustomerRepository customerRepository) throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
         List<Future<Boolean>> futures = new ArrayList<>(10);
@@ -97,15 +131,7 @@ class CustomerRepositoryTest {
         }
 
         executorService.awaitTermination(1, TimeUnit.SECONDS);
-
-        assertThatThrownBy(() -> {
-            for (Future<Boolean> future: futures) {
-                future.get();
-            }
-        })
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(ConcurrentModificationException.class)
-        ;
+        return futures;
     }
 
 }
