@@ -1,7 +1,9 @@
 
 package one.microstream.examples.springcrud;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
