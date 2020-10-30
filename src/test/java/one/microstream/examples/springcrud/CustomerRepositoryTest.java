@@ -22,6 +22,8 @@ class CustomerRepositoryTest {
         customerRepository.add(new Customer(customerNr++, "Jim"   , "Joe"));
         customerRepository.add(new Customer(customerNr++, "Kamil" , "Limitsky"));
         customerRepository.add(new Customer(customerNr++, "Karel" , "Ludvig"));
+
+        // data is not deleted intentionally
     }
 
     @Test
