@@ -5,7 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class CustomerRepositoryTest {
@@ -66,4 +76,36 @@ class CustomerRepositoryTest {
                 .hasSize(5)
                 .contains(customer);
     }
+
+    @Test
+    void concurrentUpdate_causesConcurrentUpdateException() throws InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        List<Future<Boolean>> futures = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            Future<Boolean> future = executorService.submit(() -> {
+
+                Customer newCustomer = Customer.builder().build();
+
+                customerRepository.findAll().add(newCustomer);
+                customerRepository.storeAll();
+
+                return true;
+            });
+
+            futures.add(future);
+        }
+
+        executorService.awaitTermination(1, TimeUnit.SECONDS);
+
+        assertThatThrownBy(() -> {
+            for (Future<Boolean> future: futures) {
+                future.get();
+            }
+        })
+                .isInstanceOf(ExecutionException.class)
+                .hasCauseInstanceOf(ConcurrentModificationException.class)
+        ;
+    }
+
 }
